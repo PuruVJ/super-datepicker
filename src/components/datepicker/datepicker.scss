@@ -1,0 +1,30 @@
+:host {
+  --main-area-background: white;
+  --header-background: white;
+  --ripple-color: rgba(0, 0, 0, 0.6);
+  --datepicker-width: 250px;
+  --datepicker-height: auto;
+  --header-padding: 5px;
+  --main-area-padding: 5px;
+  --datepicker-border-radius: 4px;
+  --datepicker-box-shadow: 0;
+  --datepicker-border: none;
+}
+
+#datepicker-box {
+  height: var(--datepicker-height);
+  width: var(--datepicker-width);
+  border-radius: var(--datepicker-border-radius);
+  box-shadow: var(--datepicker-box-shadow);
+  border-style: var(--datepicker-border);
+
+  #header {
+    background: var(--header-background);
+    padding: var(--header-padding);
+  }
+
+  #main-area {
+    background: var(--main-area-background);
+    padding: var(--main-area-padding);
+  }
+}
