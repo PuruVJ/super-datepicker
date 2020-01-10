@@ -1,4 +1,4 @@
-import { Component, Prop, h, Watch, Host, State } from '@stencil/core';
+import { Component, Prop, h, Host, State } from '@stencil/core';
 
 @Component({
   tag: 'super-datepicker',
@@ -56,9 +56,9 @@ export class MyComponent {
     ]
   }
 
-  @Watch('date') checkDate(newDate: string | Date | number, oldDate: string | Date | number) {
+  // @Watch('date') checkDate(newDate: string | Date | number, oldDate: string | Date | number) {
 
-  }
+  // }
 
   render() {
     return (
