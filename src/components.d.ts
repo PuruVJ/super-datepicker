@@ -15,6 +15,7 @@ export namespace Components {
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
     'date': string | Date | number;
+    'view': 'date' | 'month' | 'year';
   }
 }
 
@@ -37,6 +38,7 @@ declare namespace LocalJSX {
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
     'date'?: string | Date | number;
+    'view'?: 'date' | 'month' | 'year';
   }
 
   interface IntrinsicElements {

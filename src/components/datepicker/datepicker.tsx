@@ -1,4 +1,5 @@
-import { Component, Prop, h, Host, State } from '@stencil/core';
+import { Component, Prop, h, Host, /* State */ } from '@stencil/core';
+import { getFirstDayOfMonth, getNumberOfDaysInMonth, print } from '../../utils/utils';
 
 @Component({
   tag: 'super-datepicker',
@@ -15,15 +16,15 @@ export class MyComponent {
     mutable: true
   }) date: string | Date | number = new Date();
 
-  @State() view: 'date' | 'month' | 'year'
+  @Prop() view: 'date' | 'month' | 'year' = 'date';
 
   /**
    * The present date
    */
-  _today = new Date()
+  _today = new Date();
 
   /**
-   * Months array
+   * Months object
    */
   _months = {
     long: [
@@ -54,18 +55,90 @@ export class MyComponent {
       'Nov',
       'Dec'
     ]
+  };
+
+  /**
+   * Days object
+   */
+  _days = {
+    shortest: [
+      's',
+      'm',
+      't',
+      'w',
+      'th',
+      'f',
+      's'
+    ],
+    short: [
+      'sun',
+      'mon',
+      'tue',
+      'wed',
+      'thu',
+      'fri',
+      'sat'
+    ],
+    long: [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday'
+    ]
   }
 
-  // @Watch('date') checkDate(newDate: string | Date | number, oldDate: string | Date | number) {
+  /*  @Watch('date') checkDate(newDate: string | Date | number, oldDate: string | Date | number) {
+ 
+   } */
 
-  // }
+  _generateDateViewNodes() {
+    const currentDate = new Date(this.date);
+
+    // This is when the `1` should be shown
+    const firstDayOfMonth = getFirstDayOfMonth(currentDate, this._months);
+
+    // Number of days in the month
+    const numDaysInMonth = getNumberOfDaysInMonth(currentDate);
+
+    // The number of blank nodes to push the 1st 
+    const blankNodes = [];
+
+    // Date nodes
+    const dateNodes = [];
+
+    // Populate date nodes
+    for (let i = 0; i < numDaysInMonth; i++) {
+      dateNodes.push(i + 1)
+    }
+
+    print(dateNodes);
+
+    // Populate empty date nodes
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      blankNodes.push(' ');
+    }
+
+    // console.log(blankNodes);
+
+  }
+
+  componentDidLoad() {
+    this._generateDateViewNodes()
+  }
 
   render() {
+
     return (
-      <Host date={this.date}>
+      <Host>
         <div id="datepicker-box">
-          <div id="header"></div>
-          <div id="main-area"></div>
+          <div id="header">
+          </div>
+          <div id="main-area">
+
+          </div>
         </div>
       </Host>
     );
