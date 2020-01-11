@@ -1,2 +1,2 @@
 export * from './components';
-import '@ionic/core';
+// import '@ionic/core';
