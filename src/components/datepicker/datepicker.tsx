@@ -1,5 +1,5 @@
 import { Component, Prop, h, Host, /* State */ } from '@stencil/core';
-import { getFirstDayOfMonth, getNumberOfDaysInMonth, print } from '../../utils/utils';
+import { getFirstDayOfMonth, getNumberOfDaysInMonth, print, toTitleCase } from '../../utils/utils';
 
 @Component({
   tag: 'super-datepicker',
@@ -114,19 +114,19 @@ export class MyComponent {
       dateNodes.push(i + 1)
     }
 
-    print(dateNodes);
-
     // Populate empty date nodes
     for (let i = 0; i < firstDayOfMonth; i++) {
       blankNodes.push(' ');
     }
 
-    // console.log(blankNodes);
+    // Final date node list
+    const dateNodeList = [...blankNodes, ...dateNodes];
 
+    return dateNodeList
   }
 
   componentDidLoad() {
-    this._generateDateViewNodes()
+    // this._generateDateViewNodes()
   }
 
   render() {
@@ -135,12 +135,37 @@ export class MyComponent {
       <Host>
         <div id="datepicker-box">
           <div id="header">
+            {
+              (
+                () => {
+                  if (this.view == 'date') {
+                    const daysFormatted = this._days.shortest.map(day => toTitleCase(day));
+                    return [
+                      <div class="date-view-controls">Hello</div>,
+                      <div class="day-header">
+                        {
+                          daysFormatted.map(day => <div>{day}</div>)
+                        }
+                      </div>
+                    ];
+                  }
+                }
+              )()
+            }
           </div>
           <div id="main-area">
-
+            {
+              (
+                () => {
+                  if (this.view == 'date') {
+                    return this._generateDateViewNodes().map((val) => <div class="date">{val}</div>)
+                  }
+                }
+              )()
+            }
           </div>
         </div>
-      </Host>
+      </Host >
     );
   }
 }

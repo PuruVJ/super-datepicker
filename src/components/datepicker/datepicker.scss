@@ -4,18 +4,22 @@
   // --ripple-color: hsla(0, 0%, 0%, 0.6);
   --datepicker-width: 250px;
   --datepicker-height: auto;
-  --header-padding: 5px;
-  --main-area-padding: 5px;
+  --date-view-main-area-padding: 8px;
+  --header-padding: 15px;
+  --main-area-padding: 15px;
   --datepicker-border-radius: 4px;
-  --datepicker-box-shadow: 0;
-  --datepicker-border: none;
+  --datepicker-box-shadow: none;
+  --datepicker-border: 1px solid #dfe1e5;
   --theme-color: hsl(265, 100%, 47%);
   --header-font-color: hsla(0, 0%, 0%, 0.87);
+  --header-font-family: 'Roboto';
+  --main-area-font-family: 'Roboto';
+  --main-area-font-size: 1em;
 }
 
 #datepicker-box {
   height: var(--datepicker-height);
-  width: var(--datepicker-width);
+  width: fit-content;
   border-radius: var(--datepicker-border-radius);
   box-shadow: var(--datepicker-box-shadow);
   border-style: var(--datepicker-border);
@@ -23,6 +27,13 @@
   #header {
     background: var(--header-background);
     padding: var(--header-padding);
+    font-family: var(--header-font-family);
+
+    .day-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
   }
 
   #main-area {
@@ -30,6 +41,13 @@
     padding: var(--main-area-padding);
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    font-family: var(--main-area-font-family);
+    font-size: var(--main-area-font-size);
+    // grid-auto-rows: 1fr;
+
+    .date {
+      margin: var(--date-view-main-area-padding);
+    }
 
     // &:nth-child(0) {}
   }
