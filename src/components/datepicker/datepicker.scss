@@ -2,12 +2,12 @@
   --main-area-background: white;
   --header-background: white;
   // --ripple-color: hsla(0, 0%, 0%, 0.6);
-  --datepicker-width: 250px;
-  --datepicker-height: auto;
+  // --datepicker-width: 250px;
+  // --datepicker-height: auto;
   --date-view-main-area-padding: 8px;
   --header-padding: 15px;
   --main-area-padding: 15px;
-  --datepicker-border-radius: 4px;
+  --datepicker-border-radius: 8px;
   --datepicker-box-shadow: none;
   --datepicker-border: 1px solid #dfe1e5;
   --theme-color: hsl(265, 100%, 47%);
@@ -22,7 +22,7 @@
   width: fit-content;
   border-radius: var(--datepicker-border-radius);
   box-shadow: var(--datepicker-box-shadow);
-  border-style: var(--datepicker-border);
+  border: var(--datepicker-border);
 
   #header {
     background: var(--header-background);
