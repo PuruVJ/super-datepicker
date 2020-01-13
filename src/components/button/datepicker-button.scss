@@ -1,16 +1,67 @@
 :host {
-  --datepicker-button-border-radius: 50%;
+  --datepicker-icon-button-border-radius: 50%;
+  --datepicker-button-border-radius: 5px;
+  --button-padding: 4px 15px; 
+  --datepicker-compact-button-side-length: 2.3em;
   --theme-color: hsl(265, 100%, 47%);
+  --theme-text-color: hsla(0, 0%, 100%, 0.87);
+  // --border: 1px solid #a2a2a2;
+  --font-size: 1.3em;
+  --font-family: 'Roboto';
+  --font-weight: 400;
+  --box-shadow: 0 0 0 1px hsl(0, 0%, 64%);
+  --hover-background-color: #e2dfdf;
+  --hover-text-color: hsla(0, 0%, 0%, 0.87);
+  --focus-background-color: var(--theme-color);
+  --focus-text-color: var(--theme-text-color)
+}
 
-
-  padding: 10px;
+.button-container {
+  padding: var(--button-padding);
+  position: relative;
+  margin-top: 5%;
+  margin-left: 5%;
   border-radius: var(--datepicker-button-border-radius);
+  max-width: fit-content;
+  // box-shadow: none;
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+  -webkit-appearance: none;
+  // appearance: none;
+  cursor: pointer;
+  // box-shadow: var(--box-shadow);
+  border: none;
+  background: white;
+  transition: 0.2s;
+  text-align: center;
 
-  &:hover &:not(&:focus) {
-    background: background;
+  &:hover {
+    background: var(--hover-background-color);
+    color: var(--hover-text-color);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.selected:focus {
+    background: var(--focus-background-color);
+    color: var(--focus-text-color);
+    outline: none;
+    border: none !important;
   }
 }
 
-.button,
-.icon-button {
+.bordered {
+  box-shadow: var(--box-shadow) !important;
+}
+
+.compact {
+  border-radius: 5000px;
+  padding: 10px;
+  margin: 0;
+  min-width: var(--datepicker-compact-button-side-length) !important;
+  height: var(--datepicker-compact-button-side-length) !important;
+  text-align: center;
 }

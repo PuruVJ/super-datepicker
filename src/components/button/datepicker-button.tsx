@@ -9,18 +9,29 @@ export class DatepickerButton {
   /**
    * Whether the button is an icon button
    */
-  @Prop() iconOnly: boolean = false;
+  @Prop() compact: boolean = false;
 
+  /**
+   * Whether a border will appear around the button
+   */
+  @Prop() bordered: boolean = false;
 
+  /**
+   * Whether the button is selectable
+   */
+  @Prop() selectable: boolean = false;
+  
   render() {
     return (
       <Host>
-        <div class={{
-          'icon-button': this.iconOnly,
-          'button': !this.iconOnly
+        <button class={{
+          'bordered': this.bordered,
+          'button-container': true,
+          'selected': this.selectable,
+          'compact': this.compact
         }}>
           <slot></slot>
-        </div>
+        </button>
       </Host>
     );
   }

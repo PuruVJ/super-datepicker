@@ -1,9 +1,9 @@
 :host {
   --main-area-background: white;
   --header-background: white;
-  --date-view-main-area-padding: 14px;
-  --header-padding: 10px;
-  --main-area-padding: 10px;
+  --date-view-main-area-padding: 2px;
+  --header-padding: 0.5em;
+  --main-area-padding: 0.3em;
   --datepicker-border-radius: 8px;
   --datepicker-box-shadow: none;
   --datepicker-border: none;
@@ -11,7 +11,12 @@
   --header-font-color: hsla(0, 0%, 0%, 0.87);
   --header-font-family: "Roboto";
   --main-area-font-family: "Roboto";
-  --main-area-font-size: 1em;
+  --selection-color: hsla(265, 100%, 47%, 0);
+  --main-area-font-size: 0.9em;
+}
+
+*::selection {
+  background: var(--selection-color);
 }
 
 #datepicker-box {
@@ -24,11 +29,28 @@
   position: relative;
   // padding: var(--datepicker-border-width);
 
-
   #header {
     background: var(--header-background);
     padding: var(--header-padding);
     font-family: var(--header-font-family);
+
+    .date-view-controls {
+      display: flex;
+
+      .month-year-view {
+        datepicker-button {
+          --font-size: 1em;
+          --font-family: Roboto;
+          --font-weight: 500;
+          --button-padding: 10px 15px;
+          white-space: nowrap;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+      }
+    }
 
     .day-header {
       display: grid;
@@ -36,6 +58,18 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      font-size: 0.8em;
+      color: hsla(0, 0%, 0%, 0.38);
+    }
+
+    span.flex {
+      flex: 1 1 auto;
+    }
+
+    .navigation-buttons {
+      datepicker-button {
+        --datepicker-compact-button-side-length: 2.1em;
+      }
     }
   }
 
@@ -57,4 +91,14 @@
 
     // &:nth-child(0) {}
   }
+}
+
+#divider {
+  height: 1px;
+  background: #c0c0c0;
+}
+
+.date-buttons {
+  --font-size: 1em;
+  --datepicker-compact-button-side-length: 2.5em;
 }

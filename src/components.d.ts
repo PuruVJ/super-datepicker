@@ -12,15 +12,26 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 export namespace Components {
   interface DatepickerButton {
     /**
+    * Whether a border will appear around the button
+    */
+    'bordered': boolean;
+    /**
     * Whether the button is an icon button
     */
-    'iconOnly': boolean;
+    'compact': boolean;
+    /**
+    * Whether the button is selectable
+    */
+    'selectable': boolean;
   }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
     'date': string | Date | number;
+    /**
+    * The current view of the datepicker
+    */
     'view': 'date' | 'month' | 'year';
   }
 }
@@ -48,15 +59,26 @@ declare global {
 declare namespace LocalJSX {
   interface DatepickerButton {
     /**
+    * Whether a border will appear around the button
+    */
+    'bordered'?: boolean;
+    /**
     * Whether the button is an icon button
     */
-    'iconOnly'?: boolean;
+    'compact'?: boolean;
+    /**
+    * Whether the button is selectable
+    */
+    'selectable'?: boolean;
   }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
     'date'?: string | Date | number;
+    /**
+    * The current view of the datepicker
+    */
     'view'?: 'date' | 'month' | 'year';
   }
 

@@ -1,5 +1,7 @@
-import { Component, Prop, h, Host, /* State */ } from '@stencil/core';
-import { getFirstDayOfMonth, getNumberOfDaysInMonth, print, toTitleCase } from '../../utils/utils';
+import { Component, h, Prop, State, Watch } from '@stencil/core';
+import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase } from '../../utils/utils';
+import { MdiIcon } from "../../utils/functional-components";
+import { mdiChevronRight, mdiChevronLeft, mdiChevronDown } from "@mdi/js";
 
 @Component({
   tag: 'super-datepicker',
@@ -16,7 +18,15 @@ export class MyComponent {
     mutable: true
   }) date: string | Date | number = new Date();
 
+  /**
+   * The current view of the datepicker
+   */
   @Prop() view: 'date' | 'month' | 'year' = 'date';
+
+  /**
+   * The current dates array
+   */
+  @State() _dateNodes = []
 
   /**
    * The present date
@@ -90,9 +100,9 @@ export class MyComponent {
     ]
   }
 
-  /*  @Watch('date') checkDate(newDate: string | Date | number, oldDate: string | Date | number) {
- 
-   } */
+  @Watch('date') checkDate() {
+    this._dateNodes = this._generateDateViewNodes();
+  }
 
   _generateDateViewNodes() {
     const currentDate = new Date(this.date);
@@ -111,7 +121,10 @@ export class MyComponent {
 
     // Populate date nodes
     for (let i = 0; i < numDaysInMonth; i++) {
-      dateNodes.push(<div class="filled-date">{i + 1}</div>)
+      // const lengthOfDay = (i + 1).toString().length
+      dateNodes.push(<datepicker-button class="date-buttons" selectable compact>
+        {i + 1}
+      </datepicker-button>)
     }
 
     // Populate empty date nodes
@@ -125,47 +138,64 @@ export class MyComponent {
     return dateNodeList
   }
 
-  componentDidLoad() {
-    // this._generateDateViewNodes()
+  componentWillLoad() {
+    this._dateNodes = this._generateDateViewNodes()
   }
 
   render() {
 
     return (
-      <Host>
-        <div id="datepicker-box">
-          <div id="header">
-            {
-              (
-                () => {
-                  if (this.view == 'date') {
-                    const daysFormatted = this._days.shortest.map(day => toTitleCase(day));
-                    return [
-                      <div class="date-view-controls">Hello</div>,
-                      <div class="day-header">
-                        {
-                          daysFormatted.map(day => <div>{day}</div>)
-                        }
-                      </div>
-                    ];
-                  }
-                }
-              )()
-            }
+      <div id="datepicker-box">
+        <div id="header">
+          <div class="date-view-controls">
+            <div class="month-year-view">
+              <datepicker-button>
+                <div>
+                  {`${this._months.short[(new Date(this.date)).getMonth()]} ${(new Date(this.date)).getFullYear()}`.toUpperCase()}
+                </div>
+                <MdiIcon id="down-arrow" path={mdiChevronDown} />
+              </datepicker-button>
+            </div>
+            <span class="flex"></span>
+            <div class="navigation-buttons">
+              <datepicker-button compact id="right-button">
+                <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronLeft} />
+              </datepicker-button>
+              <datepicker-button compact id="left-button">
+                <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronRight} />
+              </datepicker-button>
+            </div>
           </div>
-          <div id="main-area">
-            {
-              (
-                () => {
-                  if (this.view == 'date') {
-                    return this._generateDateViewNodes().map((val) => <div class="date">{val}</div>)
-                  }
+          {
+            (
+              () => {
+                if (this.view == 'date') {
+                  const daysFormatted = this._days.shortest.map(day => toTitleCase(day));
+                  return [
+                    <div class="day-header">
+                      {
+                        daysFormatted.map(day => <div>{day}</div>)
+                      }
+                    </div>
+                  ];
                 }
-              )()
-            }
-          </div>
+              }
+            )()
+          }
         </div>
-      </Host >
+        <div id="divider"></div>
+        <div id="main-area">
+          {
+            (
+              () => {
+                if (this.view == 'date') {
+                  return this._dateNodes.map((val) => <div class="date">{val}</div>)
+                }
+              }
+            )()
+          }
+        </div>
+      </div>
     );
   }
 }
