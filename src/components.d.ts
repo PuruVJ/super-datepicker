@@ -10,6 +10,12 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 
 
 export namespace Components {
+  interface DatepickerButton {
+    /**
+    * Whether the button is an icon button
+    */
+    'iconOnly': boolean;
+  }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
@@ -22,17 +28,30 @@ export namespace Components {
 declare global {
 
 
+  interface HTMLDatepickerButtonElement extends Components.DatepickerButton, HTMLStencilElement {}
+  var HTMLDatepickerButtonElement: {
+    prototype: HTMLDatepickerButtonElement;
+    new (): HTMLDatepickerButtonElement;
+  };
+
   interface HTMLSuperDatepickerElement extends Components.SuperDatepicker, HTMLStencilElement {}
   var HTMLSuperDatepickerElement: {
     prototype: HTMLSuperDatepickerElement;
     new (): HTMLSuperDatepickerElement;
   };
   interface HTMLElementTagNameMap {
+    'datepicker-button': HTMLDatepickerButtonElement;
     'super-datepicker': HTMLSuperDatepickerElement;
   }
 }
 
 declare namespace LocalJSX {
+  interface DatepickerButton {
+    /**
+    * Whether the button is an icon button
+    */
+    'iconOnly'?: boolean;
+  }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
@@ -42,6 +61,7 @@ declare namespace LocalJSX {
   }
 
   interface IntrinsicElements {
+    'datepicker-button': DatepickerButton;
     'super-datepicker': SuperDatepicker;
   }
 }
@@ -52,6 +72,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
   export namespace JSX {
     interface IntrinsicElements {
+      'datepicker-button': LocalJSX.DatepickerButton & JSXBase.HTMLAttributes<HTMLDatepickerButtonElement>;
       'super-datepicker': LocalJSX.SuperDatepicker & JSXBase.HTMLAttributes<HTMLSuperDatepickerElement>;
     }
   }

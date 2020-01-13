@@ -111,12 +111,12 @@ export class MyComponent {
 
     // Populate date nodes
     for (let i = 0; i < numDaysInMonth; i++) {
-      dateNodes.push(i + 1)
+      dateNodes.push(<div class="filled-date">{i + 1}</div>)
     }
 
     // Populate empty date nodes
     for (let i = 0; i < firstDayOfMonth; i++) {
-      blankNodes.push(' ');
+      blankNodes.push(<div class="empty-date">{''}</div>);
     }
 
     // Final date node list

@@ -1,0 +1,16 @@
+:host {
+  --datepicker-button-border-radius: 50%;
+  --theme-color: hsl(265, 100%, 47%);
+
+
+  padding: 10px;
+  border-radius: var(--datepicker-button-border-radius);
+
+  &:hover &:not(&:focus) {
+    background: background;
+  }
+}
+
+.button,
+.icon-button {
+}

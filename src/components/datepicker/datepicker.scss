@@ -1,28 +1,29 @@
 :host {
   --main-area-background: white;
   --header-background: white;
-  // --ripple-color: hsla(0, 0%, 0%, 0.6);
-  // --datepicker-width: 250px;
-  // --datepicker-height: auto;
-  --date-view-main-area-padding: 8px;
-  --header-padding: 15px;
-  --main-area-padding: 15px;
+  --date-view-main-area-padding: 14px;
+  --header-padding: 10px;
+  --main-area-padding: 10px;
   --datepicker-border-radius: 8px;
   --datepicker-box-shadow: none;
-  --datepicker-border: 1px solid #dfe1e5;
+  --datepicker-border: none;
   --theme-color: hsl(265, 100%, 47%);
   --header-font-color: hsla(0, 0%, 0%, 0.87);
-  --header-font-family: 'Roboto';
-  --main-area-font-family: 'Roboto';
+  --header-font-family: "Roboto";
+  --main-area-font-family: "Roboto";
   --main-area-font-size: 1em;
 }
 
 #datepicker-box {
-  height: var(--datepicker-height);
+  height: auto;
   width: fit-content;
+  // background: var(--datepicker-border-color);
+  border: var(--datepicker-border);
   border-radius: var(--datepicker-border-radius);
   box-shadow: var(--datepicker-box-shadow);
-  border: var(--datepicker-border);
+  position: relative;
+  // padding: var(--datepicker-border-width);
+
 
   #header {
     background: var(--header-background);
@@ -32,8 +33,10 @@
     .day-header {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
-
   }
 
   #main-area {
@@ -41,6 +44,9 @@
     padding: var(--main-area-padding);
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     font-family: var(--main-area-font-family);
     font-size: var(--main-area-font-size);
     // grid-auto-rows: 1fr;
