@@ -1,6 +1,6 @@
 {
   "name": "@puruvj/super-datepicker",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Customizable Material Design datepicker",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
