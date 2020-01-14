@@ -1,7 +1,7 @@
 import { Component, h, Prop, State, Watch } from '@stencil/core';
-import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase } from '../../utils/utils';
+import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase, print as Print } from '../../utils/utils';
 import { MdiIcon } from "../../utils/functional-components";
-import { mdiChevronRight, mdiChevronLeft, mdiChevronDown } from "@mdi/js";
+import { mdiChevronRight, mdiChevronLeft, mdiChevronDown, mdiChevronUp } from "@mdi/js";
 
 @Component({
   tag: 'super-datepicker',
@@ -21,17 +21,31 @@ export class MyComponent {
   /**
    * The current view of the datepicker
    */
-  @Prop() view: 'date' | 'month' | 'year' = 'date';
+  @Prop({
+    mutable: true,
+    reflect: true
+  }) view: 'date' | 'month' | 'year' = 'date';
 
   /**
    * The current dates array
    */
-  @State() _dateNodes = []
+  @State() _dateNodes = [];
 
   /**
-   * The present date
+   * For `view` = year
+   * Years list
+   */
+  @State() _years = []
+
+  /**
+   * The present date object
    */
   _today = new Date();
+
+  /**
+   * The present year
+   */
+  _currentYear = this._today.getFullYear()
 
   /**
    * Months object
@@ -100,10 +114,36 @@ export class MyComponent {
     ]
   }
 
+  /**
+   * The config, especially for the magic numbers
+   */
+  _config = {
+    years_count: 20,
+  }
+
+  /**
+   * The CSS grid styles for main area for each view
+   */
+  _gridStyles = {
+    date: {
+      'grid-template-columns': 'repeat(7, 1fr)'
+    },
+    year: {
+      'grid-template-columns': 'repeat(4, 1fr)'
+    },
+    month: {
+      'grid-template-columns': 'repeat(4, 1fr)'
+    }
+  }
+
+
   @Watch('date') checkDate() {
     this._dateNodes = this._generateDateViewNodes();
   }
 
+  /**
+   * Generates all the date nodes to be populated
+   */
   _generateDateViewNodes() {
     const currentDate = new Date(this.date);
 
@@ -122,7 +162,7 @@ export class MyComponent {
     // Populate date nodes
     for (let i = 0; i < numDaysInMonth; i++) {
       // const lengthOfDay = (i + 1).toString().length
-      dateNodes.push(<datepicker-button class="date-buttons" selectable compact>
+      dateNodes.push(<datepicker-button bordered={this._today.getDate() === (i + 1)} class="date-buttons" selectable compact>
         {i + 1}
       </datepicker-button>)
     }
@@ -135,11 +175,52 @@ export class MyComponent {
     // Final date node list
     const dateNodeList = [...blankNodes, ...dateNodes];
 
-    return dateNodeList
+    return dateNodeList;
+  }
+
+  /**
+   * Generates a list of years for the `year` view
+   */
+  _generateYearsList(date: string | Date | number = this.date): number[] {
+    date = new Date(date);
+
+    // Get the present year
+    const presentYear = date.getFullYear();
+
+    // the base integer
+    const base = Math.floor(presentYear / this._config.years_count);
+
+    // Initial year
+    const initYear = base * this._config.years_count;
+
+    // Final year
+    const finalYear = ((base + 1) * this._config.years_count) - 1;
+
+    // The years array
+    const years_array = [];
+
+    for (let i = initYear; i <= finalYear; i++) {
+      years_array.push(i);
+    }
+
+    return years_array;
+  }
+
+  /**
+   * The onclick listener to switch the view
+   */
+  _switchView() {
+    if (this.view === 'date') {
+      this.view = 'year'
+    } else if (this.view === 'year') {
+      this.view = 'date'
+    }
   }
 
   componentWillLoad() {
-    this._dateNodes = this._generateDateViewNodes()
+    this._dateNodes = this._generateDateViewNodes();
+    this._years = this._generateYearsList();
+    Print(this._years);
   }
 
   render() {
@@ -149,11 +230,35 @@ export class MyComponent {
         <div id="header">
           <div class="date-view-controls">
             <div class="month-year-view">
-              <datepicker-button>
-                <div>
-                  {`${this._months.short[(new Date(this.date)).getMonth()]} ${(new Date(this.date)).getFullYear()}`.toUpperCase()}
+              <datepicker-button onClick={this._switchView.bind(this)}>
+                <div id="month-year-container">
+                  {
+                    (
+                      () => {
+                        if (this.view === 'date') {
+                          return [
+                            <div >
+                              {`${this._months.short[(new Date(this.date)).getMonth()]} ${(new Date(this.date)).getFullYear()}`.toUpperCase()}
+                            </div >,
+                            <div id="down-icon-container">
+                              <MdiIcon id="down-arrow" path={mdiChevronDown} />
+                            </div>
+                          ]
+                        } else if (this.view === 'year') {
+                          return [
+                            <div>
+                              {`${this._years[0]} - ${this._years[this._years.length - 1]}`}
+                            </div>,
+                            <div id="down-icon-container">
+                              <MdiIcon id="up-arrow" path={mdiChevronUp} />
+                            </div>
+                          ]
+                        }
+                      }
+                    )()
+                  }
+
                 </div>
-                <MdiIcon id="down-arrow" path={mdiChevronDown} />
               </datepicker-button>
             </div>
             <span class="flex"></span>
@@ -169,7 +274,7 @@ export class MyComponent {
           {
             (
               () => {
-                if (this.view == 'date') {
+                if (this.view === 'date') {
                   const daysFormatted = this._days.shortest.map(day => toTitleCase(day));
                   return [
                     <div class="day-header">
@@ -178,22 +283,30 @@ export class MyComponent {
                       }
                     </div>
                   ];
+                } else if (this.view === 'year') {
+
                 }
               }
             )()
           }
         </div>
         <div id="divider"></div>
-        <div id="main-area">
-          {
-            (
-              () => {
-                if (this.view == 'date') {
-                  return this._dateNodes.map((val) => <div class="date">{val}</div>)
-                }
-              }
-            )()
-          }
+        <div id="main-area" style={{
+          ...this._gridStyles[this.view]
+        }}>
+          <div id="date-view" style={{
+            'display': this.view === 'date' ? 'grid' : 'none',
+            ...this._gridStyles[this.view]
+          }}>
+            {this._dateNodes.map((val) => <div class="date">{val}</div>)}
+          </div>
+          <div id="year-view" style={{
+            'display': this.view === 'year' ? 'grid' : 'none',
+            ...this._gridStyles[this.view]
+          }}>
+            {this._years.map(val => <datepicker-button id="year-button" bordered={val === this._currentYear} selectable>{val}</datepicker-button>)}
+          </div>
+
         </div>
       </div>
     );

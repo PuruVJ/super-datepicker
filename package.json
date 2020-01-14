@@ -27,7 +27,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ionic/core": "^4.11.7",
     "@mdi/js": "^4.7.95"
   }
 }

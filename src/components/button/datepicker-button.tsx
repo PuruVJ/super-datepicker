@@ -27,7 +27,7 @@ export class DatepickerButton {
         <button class={{
           'bordered': this.bordered,
           'button-container': true,
-          'selected': this.selectable,
+          'selectable': this.selectable,
           'compact': this.compact
         }}>
           <slot></slot>

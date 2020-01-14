@@ -45,7 +45,7 @@
     outline: none;
   }
 
-  &.selected:focus {
+  &.selectable:focus {
     background: var(--focus-background-color);
     color: var(--focus-text-color);
     outline: none;

@@ -2,6 +2,7 @@
   --main-area-background: white;
   --header-background: white;
   --date-view-main-area-padding: 2px;
+  --datepicker-width: 300px;
   --header-padding: 0.5em;
   --main-area-padding: 0.3em;
   --datepicker-border-radius: 8px;
@@ -21,13 +22,14 @@
 
 #datepicker-box {
   height: auto;
-  width: fit-content;
+  width: var(--datepicker-width);
   // background: var(--datepicker-border-color);
   border: var(--datepicker-border);
   border-radius: var(--datepicker-border-radius);
   box-shadow: var(--datepicker-box-shadow);
   position: relative;
   // padding: var(--datepicker-border-width);
+  transition: 0.1s width;
 
   #header {
     background: var(--header-background);
@@ -42,12 +44,18 @@
           --font-size: 1em;
           --font-family: Roboto;
           --font-weight: 500;
-          --button-padding: 10px 15px;
+          --button-padding: 6px 9px;
           white-space: nowrap;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
+
+          #month-year-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+          }
+          #down-icon-container {
+            display: flex;
+            align-items: center;
+          }
         }
       }
     }
@@ -76,17 +84,27 @@
   #main-area {
     background: var(--main-area-background);
     padding: var(--main-area-padding);
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    align-items: center;
-    justify-content: center;
-    text-align: center;
     font-family: var(--main-area-font-family);
     font-size: var(--main-area-font-size);
     // grid-auto-rows: 1fr;
 
+    & > * {
+      display: grid;
+      // grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: 1s;
+    }
     .date {
       margin: var(--date-view-main-area-padding);
+    }
+
+    #year-button {
+      margin: var(--date-view-main-area-padding);
+      --font-size: var(--font-size);
+      --datepicker-button-border-radius: 500px;
+      --button-padding: 10px 15px;
     }
 
     // &:nth-child(0) {}
@@ -100,5 +118,5 @@
 
 .date-buttons {
   --font-size: 1em;
-  --datepicker-compact-button-side-length: 2.5em;
+  --datepicker-compact-button-side-length: 2.6em;
 }
