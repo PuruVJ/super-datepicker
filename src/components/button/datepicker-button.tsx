@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'datepicker-button',
@@ -20,19 +20,23 @@ export class DatepickerButton {
    * Whether the button is selectable
    */
   @Prop() selectable: boolean = false;
-  
+
+  /**
+   * Whether the button is selected. Works only if `selectable` is true
+   */
+  @Prop() selected: boolean = false
+
   render() {
     return (
-      <Host>
-        <button class={{
-          'bordered': this.bordered,
-          'button-container': true,
-          'selectable': this.selectable,
-          'compact': this.compact
-        }}>
-          <slot></slot>
-        </button>
-      </Host>
+      <button class={{
+        'bordered': this.bordered,
+        'button-container': true,
+        'selectable': this.selectable,
+        'compact': this.compact,
+        // 'selected': this.selectable && this.selected
+      }} autoFocus={this.selectable && this.selected}>
+        <slot></slot>
+      </button>
     );
   }
 

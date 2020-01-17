@@ -1,7 +1,7 @@
+import { mdiChevronDown, mdiChevronLeft, mdiChevronRight, mdiChevronUp } from "@mdi/js";
 import { Component, h, Prop, State, Watch } from '@stencil/core';
-import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase, print as Print } from '../../utils/utils';
 import { MdiIcon } from "../../utils/functional-components";
-import { mdiChevronRight, mdiChevronLeft, mdiChevronDown, mdiChevronUp } from "@mdi/js";
+import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase } from '../../utils/utils';
 
 @Component({
   tag: 'super-datepicker',
@@ -16,7 +16,7 @@ export class MyComponent {
   @Prop({
     reflect: true,
     mutable: true
-  }) date: string | Date | number = new Date();
+  }) date: string | Date = new Date();
 
   /**
    * The current view of the datepicker
@@ -25,6 +25,18 @@ export class MyComponent {
     mutable: true,
     reflect: true
   }) view: 'date' | 'month' | 'year' = 'date';
+
+  /**
+   * The number of years to be shown in a single view
+   */
+  @Prop({
+    attribute: 'year-view-count'
+  }) yearViewCount: number = 20;
+
+  /**
+   * Whether the calender starts from sunday or monday
+   */
+  @Prop() startsFromMonday: false;
 
   /**
    * The current dates array
@@ -36,6 +48,14 @@ export class MyComponent {
    * Years list
    */
   @State() _years = []
+
+  /**
+   * Internally keep track of the current years and 
+   */
+  @State() _pseudoDate = {
+    month: new Date(this.date).getMonth(),
+    year: new Date(this.date).getFullYear()
+  }
 
   /**
    * The present date object
@@ -115,13 +135,6 @@ export class MyComponent {
   }
 
   /**
-   * The config, especially for the magic numbers
-   */
-  _config = {
-    years_count: 20,
-  }
-
-  /**
    * The CSS grid styles for main area for each view
    */
   _gridStyles = {
@@ -139,13 +152,23 @@ export class MyComponent {
 
   @Watch('date') checkDate() {
     this._dateNodes = this._generateDateViewNodes();
+    this._generateYearsList()
+  }
+
+  @Watch('yearViewCount') updateYearViewCount() {
+    this._years = this._generateYearsList();
+    // Print(this._years);
+  }
+
+  @Watch('startsFromMonday') reCalculateCalenderLayout() {
+    this._dateNodes = this._generateDateViewNodes();
   }
 
   /**
    * Generates all the date nodes to be populated
    */
-  _generateDateViewNodes() {
-    const currentDate = new Date(this.date);
+  _generateDateViewNodes(date: Date = new Date(this.date)) {
+    const currentDate = new Date(date);
 
     // This is when the `1` should be shown
     const firstDayOfMonth = getFirstDayOfMonth(currentDate, this._months);
@@ -162,13 +185,16 @@ export class MyComponent {
     // Populate date nodes
     for (let i = 0; i < numDaysInMonth; i++) {
       // const lengthOfDay = (i + 1).toString().length
-      dateNodes.push(<datepicker-button bordered={this._today.getDate() === (i + 1)} class="date-buttons" selectable compact>
+      dateNodes.push(<datepicker-button selected={this._whetherShouldBeSelected(i)} bordered={this._checkWhetherToday(i)} class="date-button" selectable compact>
         {i + 1}
       </datepicker-button>)
     }
 
+    // Determine how many empty days to push by depending on the `startsFromMonday` property
+    const numDaysToPush = this.startsFromMonday ? firstDayOfMonth - 1 : firstDayOfMonth;
+
     // Populate empty date nodes
-    for (let i = 0; i < firstDayOfMonth; i++) {
+    for (let i = 0; i < numDaysToPush; i++) {
       blankNodes.push(<div class="empty-date">{''}</div>);
     }
 
@@ -178,23 +204,38 @@ export class MyComponent {
     return dateNodeList;
   }
 
+  private _checkWhetherToday(i: number): boolean {
+    // const selectedDate = new Date(this._today);
+
+    // Check whether the selected year is current year
+    if (this._today.getFullYear() !== this._pseudoDate.year) return false;
+
+    // Whether the current month is selected month
+    if (this._today.getMonth() !== this._pseudoDate.month) return false;
+
+    // Finally if current date is equal to selected date
+    if (this._today.getDate() !== i + 1) return false;
+
+    return true;
+  }
+
   /**
    * Generates a list of years for the `year` view
    */
-  _generateYearsList(date: string | Date | number = this.date): number[] {
+  _generateYearsList(date: string | Date = this.date): number[] {
     date = new Date(date);
 
     // Get the present year
     const presentYear = date.getFullYear();
 
     // the base integer
-    const base = Math.floor(presentYear / this._config.years_count);
+    const base = Math.floor(presentYear / this.yearViewCount);
 
     // Initial year
-    const initYear = base * this._config.years_count;
+    const initYear = base * this.yearViewCount;
 
     // Final year
-    const finalYear = ((base + 1) * this._config.years_count) - 1;
+    const finalYear = ((base + 1) * this.yearViewCount) - 1;
 
     // The years array
     const years_array = [];
@@ -217,10 +258,63 @@ export class MyComponent {
     }
   }
 
+  /**
+   * Check whether the current date passes the filter of being selectable or not
+   */
+  _whetherShouldBeSelected(i: number) {
+    const selectedDate = new Date(this.date);
+
+    // Check whether the selected year is current year
+    if (this._today.getFullYear() !== selectedDate.getFullYear()) return false;
+
+    // Whether the current month is selected month
+    if (this._today.getMonth() !== selectedDate.getMonth()) return false;
+
+    // Finally if current date is equal to selected date
+    if (this._today.getDate() !== i + 1) return false;
+
+    return true;
+  }
+
+  /**
+   * Produce next batch
+   * If `view` = date, next month calender shown
+   * If `view` = month, nothing happens. Button will be disabled
+   * If `view` = year, next set of years will be generated
+   * */
+  _produceBatch(direction: 'next' | 'previous') {
+    if (this.view === 'date') {
+      // Show the calender for the next month
+
+      // Determine number to be added for the respective batch
+      const adduct = direction === 'next' ? +1 : -1
+
+      this._pseudoDate.year = this._pseudoDate.year + Math.floor((this._pseudoDate.month + adduct) / 12);
+      this._pseudoDate.month = (this._pseudoDate.month + adduct) % 12
+
+      // Recalculate the calender
+      this._dateNodes = this._generateDateViewNodes(new Date(
+        this._pseudoDate.year,
+        this._pseudoDate.month,
+        1
+      )
+      )
+
+      // Recalculate the years list
+      this._years = this._generateYearsList(
+        new Date(
+          this._pseudoDate.year,
+          this._pseudoDate.month,
+          1
+        )
+      )
+    }
+  }
+
   componentWillLoad() {
     this._dateNodes = this._generateDateViewNodes();
     this._years = this._generateYearsList();
-    Print(this._years);
+    // Print(this._years);
   }
 
   render() {
@@ -238,7 +332,7 @@ export class MyComponent {
                         if (this.view === 'date') {
                           return [
                             <div >
-                              {`${this._months.short[(new Date(this.date)).getMonth()]} ${(new Date(this.date)).getFullYear()}`.toUpperCase()}
+                              {`${this._months.short[this._pseudoDate.month]} ${this._pseudoDate.year}`.toUpperCase()}
                             </div >,
                             <div id="down-icon-container">
                               <MdiIcon id="down-arrow" path={mdiChevronDown} />
@@ -263,10 +357,10 @@ export class MyComponent {
             </div>
             <span class="flex"></span>
             <div class="navigation-buttons">
-              <datepicker-button compact id="right-button">
+              <datepicker-button onClick={() => this._produceBatch('previous')} compact id="right-button">
                 <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronLeft} />
               </datepicker-button>
-              <datepicker-button compact id="left-button">
+              <datepicker-button onClick={() => this._produceBatch('next')} compact id="left-button">
                 <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronRight} />
               </datepicker-button>
             </div>
@@ -275,7 +369,14 @@ export class MyComponent {
             (
               () => {
                 if (this.view === 'date') {
-                  const daysFormatted = this._days.shortest.map(day => toTitleCase(day));
+                  // Upper case all the items
+                  let daysFormatted = this._days.shortest.map(day => toTitleCase(day));
+
+                  // Rearrange items depending upon `startsFromMonday`
+                  if (this.startsFromMonday) {
+                    daysFormatted[daysFormatted.length - 1] = daysFormatted.shift()
+                  }
+
                   return [
                     <div class="day-header">
                       {

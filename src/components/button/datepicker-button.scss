@@ -35,6 +35,9 @@
   background: white;
   transition: 0.2s;
   text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     background: var(--hover-background-color);

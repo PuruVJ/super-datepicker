@@ -23,16 +23,28 @@ export namespace Components {
     * Whether the button is selectable
     */
     'selectable': boolean;
+    /**
+    * Whether the button is selected. Works only if `selectable` is true
+    */
+    'selected': boolean;
   }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
-    'date': string | Date | number;
+    'date': string | Date;
+    /**
+    * Whether the calender starts from sunday or monday
+    */
+    'startsFromMonday': false;
     /**
     * The current view of the datepicker
     */
     'view': 'date' | 'month' | 'year';
+    /**
+    * The number of years to be shown in a single view
+    */
+    'yearViewCount': number;
   }
 }
 
@@ -70,16 +82,28 @@ declare namespace LocalJSX {
     * Whether the button is selectable
     */
     'selectable'?: boolean;
+    /**
+    * Whether the button is selected. Works only if `selectable` is true
+    */
+    'selected'?: boolean;
   }
   interface SuperDatepicker {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
-    'date'?: string | Date | number;
+    'date'?: string | Date;
+    /**
+    * Whether the calender starts from sunday or monday
+    */
+    'startsFromMonday'?: false;
     /**
     * The current view of the datepicker
     */
     'view'?: 'date' | 'month' | 'year';
+    /**
+    * The number of years to be shown in a single view
+    */
+    'yearViewCount'?: number;
   }
 
   interface IntrinsicElements {
