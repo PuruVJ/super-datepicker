@@ -1,7 +1,10 @@
 {
   "name": "@puruvj/super-datepicker",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Customizable Material Design datepicker",
+  "repository": {
+    "url": "https://github.com/PuruVJ/super-datepicker"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "es2015": "dist/esm/index.mjs",

@@ -283,14 +283,18 @@ export class MyComponent {
    * If `view` = year, next set of years will be generated
    * */
   _produceBatch(direction: 'next' | 'previous') {
+    // Determine number to be added for the respective batch
+    const adduct = direction === 'next' ? +1 : -1
+
+    const baseAdder = this._pseudoDate.month + adduct < 0 ? this._pseudoDate.month + adduct + 12 : this._pseudoDate.month + adduct;
+
+
+
     if (this.view === 'date') {
       // Show the calender for the next month
-
-      // Determine number to be added for the respective batch
-      const adduct = direction === 'next' ? +1 : -1
-
       this._pseudoDate.year = this._pseudoDate.year + Math.floor((this._pseudoDate.month + adduct) / 12);
-      this._pseudoDate.month = (this._pseudoDate.month + adduct) % 12
+
+      this._pseudoDate.month = (baseAdder) % 12
 
       // Recalculate the calender
       this._dateNodes = this._generateDateViewNodes(new Date(
@@ -301,6 +305,15 @@ export class MyComponent {
       )
 
       // Recalculate the years list
+      this._years = this._generateYearsList(
+        new Date(
+          this._pseudoDate.year,
+          this._pseudoDate.month,
+          1
+        )
+      )
+    } else if (this.view === 'year') {
+      this._pseudoDate.year = this._pseudoDate.year + Math.floor((this._pseudoDate.month + adduct) / 12) + (adduct * this.yearViewCount);
       this._years = this._generateYearsList(
         new Date(
           this._pseudoDate.year,
@@ -405,7 +418,7 @@ export class MyComponent {
             'display': this.view === 'year' ? 'grid' : 'none',
             ...this._gridStyles[this.view]
           }}>
-            {this._years.map(val => <datepicker-button id="year-button" bordered={val === this._currentYear} selectable>{val}</datepicker-button>)}
+            {this._years.map(val => <datepicker-button id="year-button" selected={val === new Date(this.date).getFullYear()} bordered={val === this._currentYear} selectable>{val}</datepicker-button>)}
           </div>
 
         </div>
