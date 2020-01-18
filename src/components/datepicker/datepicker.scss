@@ -90,6 +90,10 @@
     .navigation-buttons {
       datepicker-button {
         --datepicker-compact-button-side-length: 44px;
+
+        // &:disabled {
+
+        // }
       }
     }
   }

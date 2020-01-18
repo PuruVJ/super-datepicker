@@ -20,6 +20,10 @@ export namespace Components {
     */
     'compact': boolean;
     /**
+    * Whether button is disabled
+    */
+    'disabled': boolean;
+    /**
     * Whether the button is selectable
     */
     'selectable': boolean;
@@ -32,7 +36,7 @@ export namespace Components {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
-    'date': string | Date;
+    'date': Date;
     /**
     * Whether the calender starts from sunday or monday
     */
@@ -79,6 +83,10 @@ declare namespace LocalJSX {
     */
     'compact'?: boolean;
     /**
+    * Whether button is disabled
+    */
+    'disabled'?: boolean;
+    /**
     * Whether the button is selectable
     */
     'selectable'?: boolean;
@@ -91,7 +99,19 @@ declare namespace LocalJSX {
     /**
     * Selected date Note: Shouldn't be used with `range`. If both `range` and `date` are set, `range` will be prioritized.
     */
-    'date'?: string | Date;
+    'date'?: Date;
+    /**
+    * Fired when date(1 - 31, not the Date() object) is selected
+    */
+    'onDateSelected'?: (event: CustomEvent<any>) => void;
+    /**
+    * Fired when month is selected
+    */
+    'onMonthSelected'?: (event: CustomEvent<any>) => void;
+    /**
+    * Fired when year is selected
+    */
+    'onYearSelected'?: (event: CustomEvent<any>) => void;
     /**
     * Whether the calender starts from sunday or monday
     */

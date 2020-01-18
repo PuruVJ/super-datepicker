@@ -18,6 +18,10 @@
   <div>
     <super-datepicker></super-datepicker>
   </div>
+  <script>
+    const el = document.querySelector('super-datepicker');
+    el.addEventListener('yearSelected', () => console.log('hello'));
+    </script>
   <style>
     body {
       margin: 0;

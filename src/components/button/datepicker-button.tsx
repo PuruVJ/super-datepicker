@@ -26,6 +26,11 @@ export class DatepickerButton {
    */
   @Prop() selected: boolean = false
 
+  /**
+   * Whether button is disabled
+   */
+  @Prop() disabled: boolean = false;
+
   render() {
     return (
       <button class={{
@@ -33,6 +38,7 @@ export class DatepickerButton {
         'button-container': true,
         'selectable': this.selectable,
         'compact': this.compact,
+        'disabled': this.disabled
         // 'selected': this.selectable && this.selected
       }} autoFocus={this.selectable && this.selected}>
         <slot></slot>

@@ -1,5 +1,5 @@
 import { mdiChevronDown, mdiChevronLeft, mdiChevronRight, mdiChevronUp } from "@mdi/js";
-import { Component, h, Prop, State, Watch } from '@stencil/core';
+import { Component, h, Prop, State, Watch, Event, EventEmitter } from '@stencil/core';
 import { MdiIcon } from "../../utils/functional-components";
 import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase } from '../../utils/utils';
 
@@ -16,7 +16,7 @@ export class MyComponent {
   @Prop({
     reflect: true,
     mutable: true
-  }) date: string | Date = new Date();
+  }) date: Date = new Date();
 
   /**
    * The current view of the datepicker
@@ -58,6 +58,21 @@ export class MyComponent {
   }
 
   /**
+   * Fired when year is selected
+   */
+  @Event() yearSelected: EventEmitter;
+
+  /**
+   * Fired when month is selected
+   */
+  @Event() monthSelected: EventEmitter;
+
+  /**
+   * Fired when date(1 - 31, not the Date() object) is selected
+   */
+  @Event() dateSelected: EventEmitter;
+  
+  /**
    * The present date object
    */
   _today = new Date();
@@ -86,18 +101,18 @@ export class MyComponent {
       'December'
     ],
     short: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec'
     ]
   };
 
@@ -185,7 +200,11 @@ export class MyComponent {
     // Populate date nodes
     for (let i = 0; i < numDaysInMonth; i++) {
       // const lengthOfDay = (i + 1).toString().length
-      dateNodes.push(<datepicker-button selected={this._whetherShouldBeSelected(i)} bordered={this._checkWhetherToday(i)} class="date-button" selectable compact>
+      dateNodes.push(<datepicker-button
+        onClick={() => this._select(i + 1)}
+        selected={this._whetherShouldBeSelected(i)}
+        bordered={this._checkWhetherToday(i)}
+        class="date-button" selectable compact>
         {i + 1}
       </datepicker-button>)
     }
@@ -313,7 +332,8 @@ export class MyComponent {
         )
       )
     } else if (this.view === 'year') {
-      this._pseudoDate.year = this._pseudoDate.year + Math.floor((this._pseudoDate.month + adduct) / 12) + (adduct * this.yearViewCount);
+      this._pseudoDate.year = this._pseudoDate.year + (adduct * this.yearViewCount);
+      debugger;
       this._years = this._generateYearsList(
         new Date(
           this._pseudoDate.year,
@@ -321,6 +341,28 @@ export class MyComponent {
           1
         )
       )
+    } else {
+      return;
+    }
+  }
+
+  _select(val) {
+
+    if (this.view === 'date') {
+      this.date.setDate(val)
+      this.dateSelected.emit();
+
+    } else if (this.view === 'month') {
+      this.date.setMonth(this._months.short.indexOf((val as string).toLowerCase()));
+      this._pseudoDate.month = this._months.short.indexOf((val as string).toLowerCase());
+      this._dateNodes = this._generateDateViewNodes();
+      this.monthSelected.emit()
+      this.view = 'date'
+    } else {
+      this.date.setFullYear(val)
+      this._pseudoDate.year = val;
+      this.yearSelected.emit()
+      this.view = 'month'
     }
   }
 
@@ -370,10 +412,10 @@ export class MyComponent {
             </div>
             <span class="flex"></span>
             <div class="navigation-buttons">
-              <datepicker-button onClick={() => this._produceBatch('previous')} compact id="right-button">
+              <datepicker-button disabled={this.view === 'month'} onClick={() => this._produceBatch('previous')} compact id="right-button">
                 <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronLeft} />
               </datepicker-button>
-              <datepicker-button onClick={() => this._produceBatch('next')} compact id="left-button">
+              <datepicker-button disabled={this.view === 'month'} onClick={() => this._produceBatch('next')} compact id="left-button">
                 <MdiIcon fill="rgba(0, 0, 0, 0.54)" path={mdiChevronRight} />
               </datepicker-button>
             </div>
@@ -397,8 +439,6 @@ export class MyComponent {
                       }
                     </div>
                   ];
-                } else if (this.view === 'year') {
-
                 }
               }
             )()
@@ -418,7 +458,25 @@ export class MyComponent {
             'display': this.view === 'year' ? 'grid' : 'none',
             ...this._gridStyles[this.view]
           }}>
-            {this._years.map(val => <datepicker-button id="year-button" selected={val === new Date(this.date).getFullYear()} bordered={val === this._currentYear} selectable>{val}</datepicker-button>)}
+            {this._years.map(val => <datepicker-button
+              onClick={() => this._select(val)}
+              id="year-button"
+              selected={val === new Date(this.date).getFullYear()}
+              bordered={val === this._currentYear}
+              selectable>{val}</datepicker-button>)}
+          </div>
+          <div id="month-view" style={{
+            'display': this.view === 'month' ? 'grid' : 'none',
+            ...this._gridStyles[this.view]
+          }}>
+            {this._months.short.map((val => val.toUpperCase())).map(val => <datepicker-button
+              onClick={() => this._select(val)}
+              id="year-button"
+              selected={val === this._months.short[new Date(this.date).getMonth()].toUpperCase()}
+              bordered={val === this._months.short[this._today.getMonth()].toUpperCase()}
+              selectable>
+              {val}
+            </datepicker-button>)}
           </div>
 
         </div>
