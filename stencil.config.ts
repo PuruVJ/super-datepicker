@@ -13,6 +13,7 @@ export const config: Config = {
     },
     {
       type: 'www',
+      baseUrl: 'https://super-datepicker.netlify.com',
       serviceWorker: null // disable service workers
     }
   ],
