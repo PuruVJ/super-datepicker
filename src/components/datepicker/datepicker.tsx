@@ -19,6 +19,21 @@ export class MyComponent {
   }) date: Date = new Date();
 
   /**
+   * Whether the component works as a datepicker or a rangepicker
+   */
+  @Prop({
+    reflect: true
+  }) type: 'date' | 'range' = 'date'
+
+  /**
+   * The dateranges that are to be shown as selected
+   */
+  @Prop({
+    mutable: true,
+    reflect: true
+  }) daterange: Date[] = []
+
+  /**
    * The current view of the datepicker
    */
   @Prop({
