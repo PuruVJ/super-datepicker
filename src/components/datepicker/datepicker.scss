@@ -21,11 +21,17 @@
   --datepicker-border: none;
   --theme-color: hsl(265, 100%, 47%);
   --header-font-color: hsla(0, 0%, 0%, 0.87);
+  --font-color: rgba(0, 0, 0, 0.87);
   --header-font-family: "Roboto";
   --main-area-font-family: "Roboto";
-  --selection-color: hsla(265, 100%, 47%, 0);
+  --selection-color: hsla(265, 100%, 47%, 0.4);
   --main-area-font-size: 0.9em;
   --header-font-size: 0.9em;
+  --selected-font-color: white;
+}
+
+* {
+  -webkit-tap-highlight-color: hsla(0, 0%, 100%, 0);
 }
 
 *::selection {
@@ -42,6 +48,7 @@
   position: relative;
   // padding: var(--datepicker-border-width);
   transition: 0.1s width;
+  font-weight: normal;
 
   #header {
     background: var(--header-background);
@@ -55,7 +62,7 @@
       .month-year-view {
         datepicker-button {
           --font-size: 1em;
-          --font-family: Roboto;
+          --font-family: var(--font-family);
           --font-weight: 500;
           --button-padding: 6px 9px;
           white-space: nowrap;
@@ -65,6 +72,7 @@
             justify-content: space-around;
             align-items: center;
           }
+
           #down-icon-container {
             display: flex;
             align-items: center;
@@ -72,6 +80,8 @@
         }
       }
     }
+
+
 
     .day-header {
       display: grid;
@@ -105,7 +115,7 @@
     font-size: var(--main-area-font-size);
     // grid-auto-rows: 1fr;
 
-    & > * {
+    &>* {
       display: grid;
       // grid-template-columns: repeat(7, 1fr);
       grid-gap: 0.18em;
@@ -131,7 +141,22 @@
   background: hsl(0, 0%, 75%);
 }
 
+datepicker-button {
+  --font-family: var(--font-family);
+  --font-color: var(--font-color);
+}
+
 .date-button {
   --font-size: 1em;
   --datepicker-compact-button-side-length: 2.6em;
+
+  // &.range-selected {
+  //   --background-color: var(--theme-color);
+  //   --font-color: var(--selected-font-color);
+  // }
+}
+
+.date {
+  // background-color: var(--theme-color);
+  border-radius: 50%;
 }

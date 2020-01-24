@@ -3,6 +3,12 @@ import { Component, h, Prop, State, Watch, Event, EventEmitter } from '@stencil/
 import { MdiIcon } from "../../utils/functional-components";
 import { getFirstDayOfMonth, getNumberOfDaysInMonth, toTitleCase } from '../../utils/utils';
 
+/**
+ * @todo
+ * first make a daterange for desktop (shift, ctrl) + click
+ * Then implement long press gesture recognition for mobiles
+ */
+
 @Component({
   tag: 'super-datepicker',
   styleUrl: 'datepicker.scss',
@@ -19,6 +25,27 @@ export class MyComponent {
   }) date: Date = new Date();
 
   /**
+   * The type of this component
+   */
+  @Prop() type: 'date' | 'range' = 'range';
+
+  /**
+   * The currently selected daterange
+   */
+  @Prop({
+    mutable: true,
+    reflect: true
+  }) daterange: string[] = [
+    new Date(2020, 0, 19).toString(),
+    new Date(2020, 0, 20).toString(),
+    new Date(2020, 0, 21).toString(),
+    new Date(2020, 0, 22).toString(),
+    new Date(2020, 0, 23).toString(),
+    new Date(2020, 0, 24).toString(),
+    new Date(2020, 0, 25).toString()
+  ]
+
+  /**
    * The current view of the datepicker
    */
   @Prop({
@@ -29,9 +56,7 @@ export class MyComponent {
   /**
    * The number of years to be shown in a single view
    */
-  @Prop({
-    attribute: 'year-view-count'
-  }) yearViewCount: number = 20;
+  @Prop() yearViewCount: number = 20;
 
   /**
    * Whether the calender starts from sunday or monday
@@ -71,7 +96,7 @@ export class MyComponent {
    * Fired when date(1 - 31, not the Date() object) is selected
    */
   @Event() dateSelected: EventEmitter;
-  
+
   /**
    * The present date object
    */
@@ -182,7 +207,7 @@ export class MyComponent {
   /**
    * Generates all the date nodes to be populated
    */
-  _generateDateViewNodes(date: Date = new Date(this.date)) {
+  private _generateDateViewNodes(date: Date = new Date(this.date)) {
     const currentDate = new Date(date);
 
     // This is when the `1` should be shown
@@ -204,7 +229,11 @@ export class MyComponent {
         onClick={() => this._select(i + 1)}
         selected={this._whetherShouldBeSelected(i)}
         bordered={this._checkWhetherToday(i)}
-        class="date-button" selectable compact>
+        class={{
+          "date-button": true
+        }}
+        selectable
+        compact>
         {i + 1}
       </datepicker-button>)
     }
@@ -281,18 +310,22 @@ export class MyComponent {
    * Check whether the current date passes the filter of being selectable or not
    */
   _whetherShouldBeSelected(i: number) {
-    const selectedDate = new Date(this.date);
+    if (this.type === 'date') {
+      const selectedDate = new Date(this.date);
 
-    // Check whether the selected year is current year
-    if (this._today.getFullYear() !== selectedDate.getFullYear()) return false;
+      // Check whether the selected year is current year
+      if (selectedDate.getFullYear() !== this._pseudoDate.year) return false;
 
-    // Whether the current month is selected month
-    if (this._today.getMonth() !== selectedDate.getMonth()) return false;
+      // Whether the current month is selected month
+      if (selectedDate.getMonth() !== this._pseudoDate.month) return false;
 
-    // Finally if current date is equal to selected date
-    if (this._today.getDate() !== i + 1) return false;
+      // Finally if current date is equal to selected date
+      if (selectedDate.getDate() !== i + 1) return false;
 
-    return true;
+      return true;
+    } else {
+      return this.daterange.includes(new Date(this._pseudoDate.year, this._pseudoDate.month, i + 1).toString())
+    }
   }
 
   /**
@@ -333,7 +366,6 @@ export class MyComponent {
       )
     } else if (this.view === 'year') {
       this._pseudoDate.year = this._pseudoDate.year + (adduct * this.yearViewCount);
-      debugger;
       this._years = this._generateYearsList(
         new Date(
           this._pseudoDate.year,
@@ -348,21 +380,28 @@ export class MyComponent {
 
   _select(val) {
 
-    if (this.view === 'date') {
-      this.date.setDate(val)
-      this.dateSelected.emit();
+    if (this.type === 'date') {
+      if (this.view === 'date') {
 
-    } else if (this.view === 'month') {
-      this.date.setMonth(this._months.short.indexOf((val as string).toLowerCase()));
-      this._pseudoDate.month = this._months.short.indexOf((val as string).toLowerCase());
-      this._dateNodes = this._generateDateViewNodes();
-      this.monthSelected.emit()
-      this.view = 'date'
+        this.date.setDate(val)
+        this.dateSelected.emit();
+
+      } else if (this.view === 'month') {
+        this.date.setMonth(this._months.short.indexOf((val as string).toLowerCase()));
+        this._pseudoDate.month = this._months.short.indexOf((val as string).toLowerCase());
+        this._dateNodes = this._generateDateViewNodes();
+        this.monthSelected.emit()
+        this.view = 'date'
+      } else {
+        this.date.setFullYear(val)
+        this._pseudoDate.year = val;
+        this.yearSelected.emit()
+        this.view = 'month'
+      }
     } else {
-      this.date.setFullYear(val)
-      this._pseudoDate.year = val;
-      this.yearSelected.emit()
-      this.view = 'month'
+      if (this.view === 'date') {
+        
+      }
     }
   }
 
@@ -370,6 +409,9 @@ export class MyComponent {
     this._dateNodes = this._generateDateViewNodes();
     this._years = this._generateYearsList();
     // Print(this._years);
+
+    // Insert dummy dates into daterange
+
   }
 
   render() {
@@ -444,7 +486,10 @@ export class MyComponent {
             )()
           }
         </div>
+        {/* The divider line */}
         <div id="divider"></div>
+
+        {/* The main area where dates, years, and months will be shown */}
         <div id="main-area" style={{
           ...this._gridStyles[this.view]
         }}>
@@ -452,7 +497,13 @@ export class MyComponent {
             'display': this.view === 'date' ? 'grid' : 'none',
             ...this._gridStyles[this.view]
           }}>
-            {this._dateNodes.map((val) => <div class="date">{val}</div>)}
+            {this._dateNodes.map((val) =>
+              (
+                <div class="date">
+                  {val}
+                </div>
+              )
+            )}
           </div>
           <div id="year-view" style={{
             'display': this.view === 'year' ? 'grid' : 'none',

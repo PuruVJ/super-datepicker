@@ -1,4 +1,4 @@
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h, Prop, Element } from '@stencil/core';
 
 @Component({
   tag: 'datepicker-button',
@@ -6,6 +6,8 @@ import { Component, h, Prop } from '@stencil/core';
   shadow: true
 })
 export class DatepickerButton {
+  @Element() rootEl!: HTMLElement;
+
   /**
    * Whether the button is an icon button
    */
@@ -24,25 +26,41 @@ export class DatepickerButton {
   /**
    * Whether the button is selected. Works only if `selectable` is true
    */
-  @Prop() selected: boolean = false
+  @Prop({
+    mutable: true,
+    reflect: true
+  }) selected: boolean = false
 
   /**
    * Whether button is disabled
    */
   @Prop() disabled: boolean = false;
 
+  _buttonEl: HTMLButtonElement;
+
+  componentDidLoad() {
+    this._buttonEl.onclick = () => {
+      this.selected = this.selected === true ? false : true
+    }
+  }
+
   render() {
     return (
-      <button class={{
-        'bordered': this.bordered,
-        'button-container': true,
-        'selectable': this.selectable,
-        'compact': this.compact,
-        'disabled': this.disabled
-        // 'selected': this.selectable && this.selected
-      }} autoFocus={this.selectable && this.selected}>
-        <slot></slot>
-      </button>
+      <div style={{ display: 'inline-block' }}>
+        <button
+          ref={el => this._buttonEl = el}
+          id="button-el"
+          class={{
+            'bordered': this.bordered,
+            'button-container': true,
+            'selectable': this.selectable,
+            'compact': this.compact,
+            'disabled': this.disabled,
+            'selected': this.selectable && this.selected
+          }}>
+          <slot></slot>
+        </button>
+      </div>
     );
   }
 

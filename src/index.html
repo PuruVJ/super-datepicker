@@ -9,9 +9,9 @@
   <script type="module" src="/build/super-datepicker.esm.js"></script>
   <script nomodule src="/build/super-datepicker.js"></script>
   <!-- <script type="module"
-    src="https://cdn.jsdelivr.net/npm/@puruvj/super-datepicker@0.0.5/dist/super-datepicker/super-datepicker.esm.js"></script>
+    src="https://cdn.jsdelivr.net/npm/@puruvj/super-datepicker@0.0.9/dist/super-datepicker/super-datepicker.esm.js"></script>
   <script nomodule=""
-    src="https://cdn.jsdelivr.net/npm/@puruvj/super-datepicker@0.0.5/dist/super-datepicker/super-datepicker.js"></script> -->
+    src="https://cdn.jsdelivr.net/npm/@puruvj/super-datepicker@0.0.9/dist/super-datepicker/super-datepicker.js"></script> -->
 </head>
 
 <body>
@@ -20,8 +20,10 @@
   </div>
   <script>
     const el = document.querySelector('super-datepicker');
-    el.addEventListener('yearSelected', () => console.log('hello'));
-    </script>
+    el.addEventListener('dateSelected', (e) => console.log(el.date));
+    // el.date = '26 aug, 1993';
+
+  </script>
   <style>
     body {
       margin: 0;
@@ -34,9 +36,17 @@
     /* super-datepicker {} */
     div {
       display: block;
-      box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
+      /* box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12); */
       border-radius: 10px;
     }
+
+    super-datepicker {
+      --header-font-family: 'Google Sans', 'Roboto';
+      --main-area-font-family: 'Google sans', 'Roboto';
+      --font-color: white;
+      /* --header-font-color: rgba(255, 255, 255, 0.87); */
+    }
+
   </style>
 
 </body>

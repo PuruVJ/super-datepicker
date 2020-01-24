@@ -38,9 +38,17 @@ export namespace Components {
     */
     'date': Date;
     /**
+    * The currently selected daterange
+    */
+    'daterange': string[];
+    /**
     * Whether the calender starts from sunday or monday
     */
     'startsFromMonday': false;
+    /**
+    * The type of this component
+    */
+    'type': 'date' | 'range';
     /**
     * The current view of the datepicker
     */
@@ -101,6 +109,10 @@ declare namespace LocalJSX {
     */
     'date'?: Date;
     /**
+    * The currently selected daterange
+    */
+    'daterange'?: string[];
+    /**
     * Fired when date(1 - 31, not the Date() object) is selected
     */
     'onDateSelected'?: (event: CustomEvent<any>) => void;
@@ -116,6 +128,10 @@ declare namespace LocalJSX {
     * Whether the calender starts from sunday or monday
     */
     'startsFromMonday'?: false;
+    /**
+    * The type of this component
+    */
+    'type'?: 'date' | 'range';
     /**
     * The current view of the datepicker
     */
