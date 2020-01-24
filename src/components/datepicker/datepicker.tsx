@@ -400,7 +400,7 @@ export class MyComponent {
       }
     } else {
       if (this.view === 'date') {
-        
+
       }
     }
   }

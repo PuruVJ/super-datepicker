@@ -26,6 +26,15 @@
 | `yearSelected`  | Fired when year is selected                                | `CustomEvent<any>` |
 
 
+## Events
+
+| Event           | Description                                                | Type               |
+| --------------- | ---------------------------------------------------------- | ------------------ |
+| `dateSelected`  | Fired when date(1 - 31, not the Date() object) is selected | `CustomEvent<any>` |
+| `monthSelected` | Fired when month is selected                               | `CustomEvent<any>` |
+| `yearSelected`  | Fired when year is selected                                | `CustomEvent<any>` |
+
+
 ## CSS Custom Properties
 
 | Name                     | Description                 |

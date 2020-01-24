@@ -129,7 +129,11 @@ declare namespace LocalJSX {
     */
     'startsFromMonday'?: false;
     /**
+<<<<<<< HEAD
     * The type of this component
+=======
+    * Whether the component works as a datepicker or a rangepicker
+>>>>>>> ad4e1fee92720dffd950c5595042e5477e0b89c3
     */
     'type'?: 'date' | 'range';
     /**
