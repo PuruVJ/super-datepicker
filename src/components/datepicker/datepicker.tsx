@@ -27,7 +27,7 @@ export class MyComponent {
   /**
    * The type of this component
    */
-  @Prop() type: 'date' | 'range' = 'range';
+  @Prop() type: 'date' | 'range' = 'date';
 
   /**
    * The currently selected daterange
@@ -77,7 +77,8 @@ export class MyComponent {
   /**
    * Internally keep track of the current years and 
    */
-  @State() _pseudoDate = {
+  @State() _internalDate = {
+    date: new Date(this.date).getDate(),
     month: new Date(this.date).getMonth(),
     year: new Date(this.date).getFullYear()
   }
@@ -190,9 +191,12 @@ export class MyComponent {
   }
 
 
-  @Watch('date') checkDate() {
+  @Watch('date') checkDate(newDate: Date) {
     this._dateNodes = this._generateDateViewNodes();
-    this._generateYearsList()
+    this._generateYearsList();
+
+    // 
+    this._internalDate.date = newDate.getDate()
   }
 
   @Watch('yearViewCount') updateYearViewCount() {
@@ -256,10 +260,10 @@ export class MyComponent {
     // const selectedDate = new Date(this._today);
 
     // Check whether the selected year is current year
-    if (this._today.getFullYear() !== this._pseudoDate.year) return false;
+    if (this._today.getFullYear() !== this._internalDate.year) return false;
 
     // Whether the current month is selected month
-    if (this._today.getMonth() !== this._pseudoDate.month) return false;
+    if (this._today.getMonth() !== this._internalDate.month) return false;
 
     // Finally if current date is equal to selected date
     if (this._today.getDate() !== i + 1) return false;
@@ -314,17 +318,17 @@ export class MyComponent {
       const selectedDate = new Date(this.date);
 
       // Check whether the selected year is current year
-      if (selectedDate.getFullYear() !== this._pseudoDate.year) return false;
+      if (selectedDate.getFullYear() !== this._internalDate.year) return false;
 
       // Whether the current month is selected month
-      if (selectedDate.getMonth() !== this._pseudoDate.month) return false;
+      if (selectedDate.getMonth() !== this._internalDate.month) return false;
 
       // Finally if current date is equal to selected date
       if (selectedDate.getDate() !== i + 1) return false;
 
       return true;
     } else {
-      return this.daterange.includes(new Date(this._pseudoDate.year, this._pseudoDate.month, i + 1).toString())
+      return this.daterange.includes(new Date(this._internalDate.year, this._internalDate.month, i + 1).toString())
     }
   }
 
@@ -338,20 +342,20 @@ export class MyComponent {
     // Determine number to be added for the respective batch
     const adduct = direction === 'next' ? +1 : -1
 
-    const baseAdder = this._pseudoDate.month + adduct < 0 ? this._pseudoDate.month + adduct + 12 : this._pseudoDate.month + adduct;
+    const baseAdder = this._internalDate.month + adduct < 0 ? this._internalDate.month + adduct + 12 : this._internalDate.month + adduct;
 
 
 
     if (this.view === 'date') {
       // Show the calender for the next month
-      this._pseudoDate.year = this._pseudoDate.year + Math.floor((this._pseudoDate.month + adduct) / 12);
+      this._internalDate.year = this._internalDate.year + Math.floor((this._internalDate.month + adduct) / 12);
 
-      this._pseudoDate.month = (baseAdder) % 12
+      this._internalDate.month = (baseAdder) % 12
 
       // Recalculate the calender
       this._dateNodes = this._generateDateViewNodes(new Date(
-        this._pseudoDate.year,
-        this._pseudoDate.month,
+        this._internalDate.year,
+        this._internalDate.month,
         1
       )
       )
@@ -359,17 +363,17 @@ export class MyComponent {
       // Recalculate the years list
       this._years = this._generateYearsList(
         new Date(
-          this._pseudoDate.year,
-          this._pseudoDate.month,
+          this._internalDate.year,
+          this._internalDate.month,
           1
         )
       )
     } else if (this.view === 'year') {
-      this._pseudoDate.year = this._pseudoDate.year + (adduct * this.yearViewCount);
+      this._internalDate.year = this._internalDate.year + (adduct * this.yearViewCount);
       this._years = this._generateYearsList(
         new Date(
-          this._pseudoDate.year,
-          this._pseudoDate.month,
+          this._internalDate.year,
+          this._internalDate.month,
           1
         )
       )
@@ -382,19 +386,20 @@ export class MyComponent {
 
     if (this.type === 'date') {
       if (this.view === 'date') {
+        // If its just single datepicker view, simply change the se
 
         this.date.setDate(val)
         this.dateSelected.emit();
 
       } else if (this.view === 'month') {
         this.date.setMonth(this._months.short.indexOf((val as string).toLowerCase()));
-        this._pseudoDate.month = this._months.short.indexOf((val as string).toLowerCase());
+        this._internalDate.month = this._months.short.indexOf((val as string).toLowerCase());
         this._dateNodes = this._generateDateViewNodes();
         this.monthSelected.emit()
         this.view = 'date'
       } else {
         this.date.setFullYear(val)
-        this._pseudoDate.year = val;
+        this._internalDate.year = val;
         this.yearSelected.emit()
         this.view = 'month'
       }
@@ -429,7 +434,7 @@ export class MyComponent {
                         if (this.view === 'date') {
                           return [
                             <div >
-                              {`${this._months.short[this._pseudoDate.month]} ${this._pseudoDate.year}`.toUpperCase()}
+                              {`${this._months.short[this._internalDate.month]} ${this._internalDate.year}`.toUpperCase()}
                             </div >,
                             <div id="down-icon-container">
                               <MdiIcon id="down-arrow" path={mdiChevronDown} />
